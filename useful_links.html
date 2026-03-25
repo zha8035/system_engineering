@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BME 学习与科研资源导航</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .resource-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- 顶部导航/标题 -->
+    <nav class="bg-slate-800 text-white py-8 px-4 shadow-lg">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                <i class="fa-solid fa-bookmark mr-3 text-indigo-400"></i>有用资源导航
+            </h1>
+            <p class="text-slate-400">收集生物医学工程、信号处理及视觉错觉相关的优质在线资源</p>
+        </div>
+    </nav>
+
+    <!-- 资源列表容器 -->
+    <main class="max-w-6xl mx-auto py-12 px-4">
+        
+        <!-- 资源网格 -->
+        <div id="resource-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- 资源项 1: Wagon-wheel effect -->
+            <div class="resource-card bg-white rounded-xl overflow-hidden border border-slate-200 transition-all duration-300 flex flex-column">
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa-solid fa-eye text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800">车轮效应 (Aliasing)</h2>
+                    </div>
+                    <p class="text-slate-600 mb-6 flex-grow">
+                        这是一个非常精彩的视觉错觉演示，展示了当采样率（或视频帧率）与物体旋转频率不匹配时产生的“车轮倒转”现象。对于理解数字信号处理中的混叠（Aliasing）非常有帮助。
+                    </p>
+                    <a href="https://michaelbach.de/ot/mot-wagonWheel/" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        访问资源 <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 资源项 2: 示例占位 (您可以仿照上面修改) -->
+            <div class="resource-card bg-white rounded-xl overflow-hidden border border-slate-200 transition-all duration-300 flex flex-column">
+                <div class="p-6 flex flex-col h-full">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa-solid fa-wave-square text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800">PhysioNet 数据库</h2>
+                    </div>
+                    <p class="text-slate-600 mb-6 flex-grow">
+                        全球领先的开放式生理信号数据库，由 MIT 维护。包含 ECG、EEG 等海量真实临床数据，是生医工科研必备的资源库。
+                    </p>
+                    <a href="https://physionet.org/" target="_blank" class="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                        访问资源 <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 资源项 3: 示例占位 -->
+            <div class="resource-card bg-white rounded-xl overflow-hidden border border-slate-200 transition-all duration-300 flex flex-column opacity-60">
+                <div class="p-6 flex flex-col h-full italic">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-slate-100 text-slate-400 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa-solid fa-plus text-xl"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-400">待添加新资源...</h2>
+                    </div>
+                    <p class="text-slate-400 mb-6 flex-grow">
+                        您可以直接在 HTML 源码中复制上面的卡片代码块，修改链接和标题即可轻松增加新的资源。
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center py-10 text-slate-400 text-sm">
+        <p>© 2026 生物医学工程教学资源库</p>
+        <p class="mt-2 italic">Keep Learning, Keep Processing.</p>
+    </footer>
+
+</body>
+</html>

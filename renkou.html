@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人口迁移系统演示 - 特征向量解法</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .math-font { font-family: 'Times New Roman', Times, serif; font-style: italic; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8">
+    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-700">城市人口迁移：系统演化与对角化演示</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <!-- 输入控制 -->
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">系统参数 (迁移率)</h2>
+                <div class="mb-4">
+                    <label class="block text-sm">A → B 迁移率 (p): <span id="pVal" class="font-bold text-blue-600">0.1</span></label>
+                    <input type="range" id="pInput" min="0.01" max="0.5" step="0.01" value="0.1" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm">B → A 迁移率 (q): <span id="qVal" class="font-bold text-blue-600">0.2</span></label>
+                    <input type="range" id="qInput" min="0.01" max="0.5" step="0.01" value="0.2" class="w-full">
+                </div>
+                <div class="mt-6 border-t pt-4">
+                    <h2 class="text-xl font-semibold mb-4">初始人口分布</h2>
+                    <label class="block text-sm">城市 A 初始值: <span id="a0Val" class="font-bold">700</span></label>
+                    <input type="range" id="a0Input" min="0" max="1000" value="700" class="w-full">
+                </div>
+            </div>
+
+            <!-- 图表显示 -->
+            <div class="md:col-span-2">
+                <canvas id="popChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- 数学分解展示 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="p-4 bg-gray-100 rounded-lg">
+                <h3 class="text-lg font-bold mb-2">转移矩阵 P</h3>
+                <div class="flex items-center justify-center text-xl bg-white p-4 rounded border">
+                    <span class="mr-2">P =</span>
+                    <div class="border-l border-r px-2 py-1 flex flex-col items-center">
+                        <div class="flex space-x-4"><span id="m00">0.9</span><span id="m01">0.2</span></div>
+                        <div class="flex space-x-4"><span id="m10">0.1</span><span id="m11">0.8</span></div>
+                    </div>
+                </div>
+                <p class="text-sm mt-4 text-gray-600 italic">注：P = V Λ V⁻¹。我们将计算 Pⁿ，当 n 很大时，系统收敛到特征值为 1 的特征向量。</p>
+            </div>
+
+            <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                <h3 class="text-lg font-bold mb-2 text-green-800">系统结论 (稳态预测)</h3>
+                <div class="space-y-3 mt-4">
+                    <p>特征值: <span class="math-font">λ₁ = 1</span>, <span class="math-font">λ₂ = </span> <span id="lambda2" class="font-bold">0.7</span></p>
+                    <p>当 <span class="math-font">n → ∞</span> 时, <span class="math-font">λ₂ⁿ → 0</span>。</p>
+                    <p class="text-lg font-semibold">理论预测最终比例 A : B = <span id="ratioResult" class="text-blue-700">2 : 1</span></p>
+                    <div id="steadyMsg" class="p-2 bg-white rounded border border-green-300 text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chart;
+        const pInput = document.getElementById('pInput');
+        const qInput = document.getElementById('qInput');
+        const a0Input = document.getElementById('a0Input');
+
+        function update() {
+            const p = parseFloat(pInput.value);
+            const q = parseFloat(qInput.value);
+            const a0 = parseInt(a0Input.value);
+            const b0 = 1000 - a0;
+
+            document.getElementById('pVal').innerText = p.toFixed(2);
+            document.getElementById('qVal').innerText = q.toFixed(2);
+            document.getElementById('a0Val').innerText = a0;
+
+            // 矩阵显示
+            document.getElementById('m00').innerText = (1 - p).toFixed(2);
+            document.getElementById('m01').innerText = q.toFixed(2);
+            document.getElementById('m10').innerText = p.toFixed(2);
+            document.getElementById('m11').innerText = (1 - q).toFixed(2);
+
+            // 特征值计算 λ2 = 1 - p - q
+            const l2 = 1 - p - q;
+            document.getElementById('lambda2').innerText = l2.toFixed(2);
+
+            // 稳态特征向量：P * [v1, v2]' = 1 * [v1, v2]' => -p*v1 + q*v2 = 0 => v1/v2 = q/p
+            const ratio = q / p;
+            document.getElementById('ratioResult').innerText = `${ratio.toFixed(2)} : 1`;
+            
+            const finalA = (q / (p + q)) * 1000;
+            const finalB = (p / (p + q)) * 1000;
+            document.getElementById('steadyMsg').innerHTML = `最终人口平衡点：A ≈ <b>${Math.round(finalA)}</b>, B ≈ <b>${Math.round(finalB)}</b>`;
+
+            // 模拟迭代
+            const dataA = [a0];
+            const dataB = [b0];
+            let currentA = a0;
+            let currentB = b0;
+
+            for (let i = 1; i <= 50; i++) {
+                let nextA = (1 - p) * currentA + q * currentB;
+                let nextB = p * currentA + (1 - q) * currentB;
+                dataA.push(nextA);
+                dataB.push(nextB);
+                currentA = nextA;
+                currentB = nextB;
+            }
+
+            renderChart(dataA, dataB);
+        }
+
+        function renderChart(dataA, dataB) {
+            const labels = Array.from({length: 51}, (_, i) => i);
+            if (chart) {
+                chart.data.datasets[0].data = dataA;
+                chart.data.datasets[1].data = dataB;
+                chart.update('none');
+            } else {
+                const ctx = document.getElementById('popChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: '城市 A 人口', data: dataA, borderColor: '#3b82f6', tension: 0.1, fill: false },
+                            { label: '城市 B 人口', data: dataB, borderColor: '#ef4444', tension: 0.1, fill: false }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { min: 0, max: 1000, title: { display: true, text: '人口数量' } },
+                            x: { title: { display: true, text: '年份 (n)' } }
+                        },
+                        animation: { duration: 500 }
+                    }
+                });
+            }
+        }
+
+        pInput.oninput = update;
+        qInput.oninput = update;
+        a0Input.oninput = update;
+
+        window.onload = update;
+    </script>
+</body>
+</html>
